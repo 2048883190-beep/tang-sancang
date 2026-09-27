@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>糖三藏 · 三藏辨经，答案有据</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/static/styles.css?v=sz35" />
+  </head>
+  <body>
+    <div id="progress" aria-hidden="true"></div>
+
+    <div class="app-shell">
+      <header class="site-header">
+        <div class="header-left">
+          <div class="uni-block" title="华东理工大学">
+            <img
+              class="uni-logo"
+              src="/static/assets/ecust-logo.png"
+              width="40"
+              height="40"
+              alt="华东理工大学"
+            />
+            <div class="uni-text">
+              <strong>华东理工大学</strong>
+              <span>信息科学与工程学院</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="header-center brand-block">
+          <div class="seal-logo" aria-hidden="true">
+            <img src="/static/assets/seal.svg" alt="" width="26" height="26" />
+          </div>
+          <div class="brand-text">
+            <h1>糖三藏</h1>
+            <p class="slogan">三藏辨经，答案有据</p>
+          </div>
+        </div>
+
+        <div class="header-right">
+          <button type="button" class="btn btn-ghost" id="btnHistory">历史</button>
+          <button type="button" class="btn btn-primary" id="btnNew">新提问</button>
+        </div>
+      </header>
+
+      <div class="ritual-bar" id="ritualBar" hidden>
+        <div class="ritual-track">
+          <div class="ritual-step" data-ritual="ask"><i></i><span>提问</span></div>
+          <div class="ritual-line"></div>
+          <div class="ritual-step" data-ritual="fetch"><i></i><span>取经</span></div>
+          <div class="ritual-line"></div>
+          <div class="ritual-step" data-ritual="judge"><i></i><span>辨经</span></div>
+          <div class="ritual-line"></div>
+          <div class="ritual-step" data-ritual="gain"><i></i><span>得据</span></div>
+          <div class="ritual-line"></div>
+          <div class="ritual-step" data-ritual="verify"><i></i><span>核经</span></div>
+        </div>
+        <p class="ritual-msg" id="ritualMsg">就绪</p>
+      </div>
+
+      <div class="workspace" id="workspace">
+        <section class="welcome-stage" id="welcomeStage">
+          <p class="welcome-kicker">2 型糖尿病专科问答</p>
+          <h2 class="welcome-title">今天，问糖三藏。</h2>
+          <p class="welcome-sub tip">先取证、再辨经，把可核对的原文带回来。</p>
+
+          <div class="ask-box ask-box-hero">
+            <label class="ask-label" for="input">你的问题</label>
+            <textarea
+              id="input"
+              rows="3"
+              placeholder="例如：患者 eGFR 25，二甲双胍还能继续使用吗？"
+            ></textarea>
+            <div class="ask-actions">
+              <span class="ask-hint tip" id="statusLine">就绪</span>
+              <button type="button" class="btn btn-primary btn-lg" id="btnSend">开始取经</button>
+            </div>
+          </div>
+
+          <div class="examples">
+            <p class="examples-label tip">可以这样问</p>
+            <div class="example-grid" id="exampleChips">
+              <button
+                type="button"
+                class="example-card"
+                data-text="2型糖尿病患者eGFR 25 ml/min/1.73m²，目前口服二甲双胍，是否需要停药或调整？"
+              >
+                <span class="ex-tag">肾功能</span>
+                <span class="ex-text">eGFR 25 时，二甲双胍还能用吗？</span>
+              </button>
+              <button
+                type="button"
+                class="example-card"
+                data-text="请根据指南和说明书，说明二甲双胍在2型糖尿病中的推荐地位，以及哪些情况下不能用。"
+              >
+                <span class="ex-tag">用药</span>
+                <span class="ex-text">二甲双胍的推荐与限制</span>
+              </button>
+              <button
+                type="button"
+                class="example-card"
+                data-text="老年2型糖尿病患者使用磺脲类药物时，需要特别注意哪些低血糖风险？"
+              >
+                <span class="ex-tag">老年</span>
+                <span class="ex-text">老年患者与低血糖风险</span>
+              </button>
+              <button
+                type="button"
+                class="example-card"
+                data-text="2型糖尿病合并慢性肾脏病时，SGLT2抑制剂是否仍可考虑使用？有哪些注意点？"
+              >
+                <span class="ex-tag">合并症</span>
+                <span class="ex-text">慢性肾病与用药注意</span>
+              </button>
+            </div>
+          </div>
+
+          <p class="disclaimer tip">仅供学习参考，不能替代执业医师面诊与诊疗决策。</p>
+        </section>
+
+        <section class="result-stage hidden" id="resultStage">
+          <div class="result-layout">
+            <nav class="evidence-path" id="evidencePath" aria-label="证据链">
+              <button type="button" class="path-node active" data-panel="answer">
+                <i></i><span>答案</span>
+              </button>
+              <button type="button" class="path-node" data-panel="sanzang">
+                <i></i><span>辨经</span>
+              </button>
+              <button type="button" class="path-node" data-panel="fetch">
+                <i></i><span>证据</span>
+              </button>
+              <button type="button" class="path-node" data-panel="source">
+                <i></i><span>原文</span>
+              </button>
+              <button type="button" class="path-node" data-panel="question">
+                <i></i><span>追问</span>
+              </button>
+            </nav>
+
+            <div class="result-main">
+              <article class="panel-card panel-answer is-focus" data-view="answer">
+                <div class="panel-head">
+                  <span class="panel-kicker">结论</span>
+                  <span class="stamp" id="retrieveStamp">处理中</span>
+                </div>
+
+                <div class="answer-scoreboard" id="answerScoreboard" hidden>
+                  <div class="score-overall">
+                    <span class="score-overall-label">辨经综合</span>
+                    <strong id="scoreOverall">—</strong>
+                  </div>
+                  <div class="score-trio">
+                    <div class="score-item">
+                      <span>权威</span>
+                      <strong id="scoreAuth">—</strong>
+                    </div>
+                    <div class="score-item">
+                      <span>适用</span>
+                      <strong id="scoreAppl">—</strong>
+                    </div>
+                    <div class="score-item">
+                      <span>一致</span>
+                      <strong id="scoreCons">—</strong>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="conclusion-body" id="answerBody">—</div>
+                <p class="decision-banner tip" id="decisionBanner" hidden></p>
+              </article>
+
+              <article class="panel-card panel-sanzang" data-view="sanzang">
+                <div class="panel-head">
+                  <span class="panel-kicker">三藏辨经</span>
+                  <span class="panel-note tip" id="sanzangDoneHint">待辨</span>
+                </div>
+                <div class="sanzang-grid" id="sanzangGrid">
+                  <button type="button" class="sanzang-seal" data-key="authority" id="sealAuthority">
+                    <div class="seal-top">
+                      <strong>权威藏</strong>
+                      <em class="seal-score-num" id="numAuthority">—</em>
+                    </div>
+                    <p class="seal-desc">来源是否可靠</p>
+                    <span class="seal-state" id="stateAuthority">待评估</span>
+                    <span class="seal-check" aria-hidden="true">✓</span>
+                  </button>
+                  <button type="button" class="sanzang-seal" data-key="applicability" id="sealApplicability">
+                    <div class="seal-top">
+                      <strong>适用藏</strong>
+                      <em class="seal-score-num" id="numApplicability">—</em>
+                    </div>
+                    <p class="seal-desc">是否匹配当前情境</p>
+                    <span class="seal-state" id="stateApplicability">待评估</span>
+                    <span class="seal-check" aria-hidden="true">✓</span>
+                  </button>
+                  <button type="button" class="sanzang-seal" data-key="consistency" id="sealConsistency">
+                    <div class="seal-top">
+                      <strong>一致藏</strong>
+                      <em class="seal-score-num" id="numConsistency">—</em>
+                    </div>
+                    <p class="seal-desc">证据是否相互支持</p>
+                    <span class="seal-state" id="stateConsistency">待评估</span>
+                    <span class="seal-check" aria-hidden="true">✓</span>
+                  </button>
+                </div>
+                <div class="sanzang-detail" id="sanzangDetail" hidden>
+                  <h4 id="sanzangDetailTitle">—</h4>
+                  <p id="sanzangDetailBody">—</p>
+                </div>
+              </article>
+
+              <article class="panel-card evidence-panel" data-view="fetch">
+                <div class="panel-head">
+                  <span class="panel-kicker">证据</span>
+                  <div class="ev-nav">
+                    <button type="button" class="btn btn-ghost btn-sm" id="btnPrevEv">上一条</button>
+                    <span class="panel-note tip" id="evidenceCount">0 条</span>
+                    <button type="button" class="btn btn-ghost btn-sm" id="btnNextEv">下一条</button>
+                  </div>
+                </div>
+                <div class="evidence-stage" id="evidenceView">
+                  <p class="empty-state tip">取证完成后，这里会显示指南或说明书依据。</p>
+                </div>
+              </article>
+
+              <article class="panel-card source-climax" data-view="source" id="sourceClimax">
+                <div class="panel-head">
+                  <span class="panel-kicker">原文</span>
+                  <button type="button" class="btn btn-ghost btn-sm" id="btnBackAnswer">返回结论</button>
+                </div>
+                <div class="source-split">
+                  <div class="source-aside">
+                    <p class="source-aside-title" id="sourceAsideTitle">从证据中打开原文</p>
+                    <dl class="source-aside-meta" id="sourceAsideMeta"></dl>
+                    <div class="source-aside-seals" id="sourceAsideSeals"></div>
+                  </div>
+                  <div class="source-page">
+                    <div class="page-spine" aria-hidden="true"></div>
+                    <div class="page-frame">
+                      <p class="page-num tip" id="sourcePageNum">—</p>
+                      <img id="tracePageImg" class="page-img hidden" alt="原文页预览" />
+                      <div class="page-empty" id="tracePreviewEmpty">
+                        <p class="tip">在证据里点击「查看原文」，这里会显示对应页面。</p>
+                      </div>
+                    </div>
+                    <a class="btn btn-primary" id="traceOpenFull" href="#" target="_blank" rel="noopener">打开完整页</a>
+                  </div>
+                </div>
+              </article>
+
+              <article class="panel-card panel-question" data-view="question">
+                <div class="panel-head">
+                  <span class="panel-kicker">当前问题</span>
+                  <button type="button" class="btn btn-ghost btn-sm" id="btnAskAgain">再问一题</button>
+                </div>
+                <p class="question-text" id="questionText">—</p>
+                <div class="ask-box ask-box-compact">
+                  <textarea id="inputFollow" rows="2" placeholder="继续追问…"></textarea>
+                  <div class="ask-actions">
+                    <span class="ask-hint tip" id="statusLineFollow">可以继续追问</span>
+                    <button type="button" class="btn btn-primary" id="btnSendFollow">取经</button>
+                  </div>
+                </div>
+              </article>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <div class="fetching-veil" id="fetchingVeil" hidden>
+      <div class="veil-card">
+        <div class="veil-ritual" id="veilRitual">
+          <div class="veil-dot" data-v="fetch"></div>
+          <span>取经</span>
+          <div class="veil-dot" data-v="judge"></div>
+          <span>辨经</span>
+          <div class="veil-dot" data-v="gain"></div>
+          <span>得据</span>
+          <div class="veil-dot" data-v="verify"></div>
+          <span>核经</span>
+        </div>
+        <p class="veil-title" id="fetchingTitle">取经中……</p>
+        <p class="veil-sub tip" id="fetchingSub">正在检索专科指南与说明书</p>
+      </div>
+    </div>
+
+    <aside class="trace-drawer" id="traceDrawer" aria-hidden="true">
+      <div class="trace-head">
+        <div>
+          <p class="panel-kicker">原文</p>
+          <h3 id="traceTitle">—</h3>
+          <p class="trace-meta tip" id="traceMeta">—</p>
+        </div>
+        <button type="button" class="btn btn-ghost" id="btnCloseTrace">关闭</button>
+      </div>
+      <blockquote class="trace-quote" id="traceQuote">—</blockquote>
+    </aside>
+
+    <aside class="history-drawer" id="historyDrawer" aria-hidden="true">
+      <div class="trace-head">
+        <h3>历史问询</h3>
+        <button type="button" class="btn btn-ghost" id="btnCloseHistory">关闭</button>
+      </div>
+      <div class="session-list" id="sessionList"></div>
+    </aside>
+    <div class="drawer-mask" id="drawerMask" hidden></div>
+
+    <script src="/static/app.js?v=sz35"></script>
+  </body>
+</html>

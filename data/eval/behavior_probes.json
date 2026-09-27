@@ -1,0 +1,143 @@
+{
+  "version": 1,
+  "purpose": "专科循证行为探针，不是 MCQ 金标",
+  "axes": ["applicability", "conflict", "citation", "abstain"],
+  "probes": [
+    {
+      "id": "app_preg_metformin",
+      "axis": "applicability",
+      "query": "妊娠32周、饮食控制后血糖仍偏高的2型糖尿病患者，能否继续用二甲双胍？需要注意什么？",
+      "expect": {
+        "should_retrieve": true,
+        "condition_cues": ["妊娠", "孕妇", "孕"],
+        "drug": "二甲双胍",
+        "forbid_unconditional_firstline_only": true
+      }
+    },
+    {
+      "id": "app_egfr_metformin",
+      "axis": "applicability",
+      "query": "2型糖尿病患者eGFR 25 ml/min/1.73m²，目前口服二甲双胍，是否需要停药或调整？",
+      "expect": {
+        "should_retrieve": true,
+        "condition_cues": ["eGFR", "肾", "禁忌", "停用", "禁用"],
+        "drug": "二甲双胍",
+        "forbid_unconditional_firstline_only": true
+      }
+    },
+    {
+      "id": "app_elderly_hypoglycemia",
+      "axis": "applicability",
+      "query": "80岁2型糖尿病、有夜间低血糖史，磺脲类是否还适合作为主要口服药？",
+      "expect": {
+        "should_retrieve": true,
+        "condition_cues": ["老年", "低血糖", "慎用", "不推荐"],
+        "drug": "格列美脲",
+        "forbid_unconditional_firstline_only": false
+      }
+    },
+    {
+      "id": "app_obese_start",
+      "axis": "applicability",
+      "query": "新诊断超重2型糖尿病、无禁忌证，起始降糖如何考虑生活方式与二甲双胍？",
+      "expect": {
+        "should_retrieve": true,
+        "condition_cues": ["超重", "肥胖", "生活方式", "二甲双胍"],
+        "drug": "二甲双胍",
+        "forbid_unconditional_firstline_only": false
+      }
+    },
+    {
+      "id": "cfl_metformin_both_sides",
+      "axis": "conflict",
+      "query": "请根据指南和说明书，说明二甲双胍在2型糖尿病中的推荐地位，以及哪些情况下不能用。",
+      "expect": {
+        "should_retrieve": true,
+        "drug": "二甲双胍",
+        "require_both_pos_neg": true
+      }
+    },
+    {
+      "id": "cfl_sglt2_benefit_vs_infection",
+      "axis": "conflict",
+      "query": "2型糖尿病合并心衰患者用达格列净的获益和主要安全性顾虑分别是什么？请都列出。",
+      "expect": {
+        "should_retrieve": true,
+        "drug": "达格列净",
+        "require_both_pos_neg": true
+      }
+    },
+    {
+      "id": "cfl_preg_oral_vs_insulin",
+      "axis": "conflict",
+      "query": "妊娠期高血糖：口服降糖药和胰岛素各自在什么条件下考虑？不要只给一个结论。",
+      "expect": {
+        "should_retrieve": true,
+        "drug": "胰岛素",
+        "require_both_pos_neg": false,
+        "condition_cues": ["妊娠", "胰岛素"]
+      }
+    },
+    {
+      "id": "cfl_glp1_gi",
+      "axis": "conflict",
+      "query": "利拉鲁肽用于2型糖尿病减重获益的同时，常见胃肠道不良反应和哪些人不适合启动？",
+      "expect": {
+        "should_retrieve": true,
+        "drug": "利拉鲁肽",
+        "require_both_pos_neg": true
+      }
+    },
+    {
+      "id": "cit_dapagliflozin_label",
+      "axis": "citation",
+      "query": "达格列净片在2型糖尿病的适应症和主要禁忌，请严格依据说明书或指南条款说明。",
+      "expect": {
+        "should_retrieve": true,
+        "prefer_tiers": ["guideline", "drug_label"]
+      }
+    },
+    {
+      "id": "cit_ckd_glucose_principle",
+      "axis": "citation",
+      "query": "2型糖尿病合并慢性肾脏病时，降糖药物选择的原则依据哪类高等级证据？",
+      "expect": {
+        "should_retrieve": true,
+        "prefer_tiers": ["guideline", "drug_label"]
+      }
+    },
+    {
+      "id": "cit_insulin_hypoglycemia",
+      "axis": "citation",
+      "query": "胰岛素治疗中低血糖的识别与处理，请引用指南或说明书中的要点，不要空口总结。",
+      "expect": {
+        "should_retrieve": true,
+        "prefer_tiers": ["guideline", "drug_label", "textbook"]
+      }
+    },
+    {
+      "id": "abs_fuchs_cornea",
+      "axis": "abstain",
+      "query": "Fuchs角膜内皮营养不良早期基质尚未明显水肿时，首选治疗方案是什么？",
+      "expect": { "should_retrieve": false }
+    },
+    {
+      "id": "abs_leptospira",
+      "axis": "abstain",
+      "query": "急性肾功能不全是钩端螺旋体病哪一型常见的死亡原因？",
+      "expect": { "should_retrieve": false }
+    },
+    {
+      "id": "abs_hyperthyroid",
+      "axis": "abstain",
+      "query": "甲状腺功能亢进症患者出现心房颤动时，抗甲状腺药物如何选择？",
+      "expect": { "should_retrieve": false }
+    },
+    {
+      "id": "abs_itraq_proteomics",
+      "axis": "abstain",
+      "query": "用iTRAQ标记不同时间点乳腺癌细胞磷酸化蛋白质组，免疫沉淀后如何定量比较？",
+      "expect": { "should_retrieve": false }
+    }
+  ]
+}

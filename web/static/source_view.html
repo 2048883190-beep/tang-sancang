@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>原文核验 · 糖三藏</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@600;700&family=Noto+Sans+SC:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --paper: #f7f3ea;
+        --panel: #fffdf8;
+        --ink: #2a2622;
+        --muted: #5c564e;
+        --line: #e4ddd0;
+        --teal: #3d6b66;
+        --cinnabar: #a63d2f;
+        --font: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+        --serif: "Noto Serif SC", "Songti SC", serif;
+      }
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+      body {
+        font-family: var(--font);
+        background: var(--paper);
+        color: var(--ink);
+        height: 100vh;
+        display: grid;
+        grid-template-rows: auto 1fr;
+      }
+      .bar {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        justify-content: space-between;
+        padding: 14px 18px;
+        background: var(--panel);
+        border-bottom: 1px solid var(--line);
+      }
+      .bar .kicker {
+        font-size: 11px;
+        letter-spacing: 0.18em;
+        color: var(--teal);
+        font-weight: 700;
+      }
+      .bar h1 {
+        font-family: var(--serif);
+        font-size: 17px;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        margin-top: 2px;
+      }
+      .bar .meta { font-size: 12px; color: var(--muted); margin-top: 2px; }
+      .actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+      .btn {
+        border: 1px solid var(--line);
+        background: #fff;
+        color: var(--ink);
+        border-radius: 8px;
+        padding: 7px 12px;
+        font: inherit;
+        font-size: 13px;
+        font-weight: 600;
+        text-decoration: none;
+        cursor: pointer;
+      }
+      .btn.primary {
+        background: var(--teal);
+        border-color: var(--teal);
+        color: #fff;
+      }
+      .layout {
+        display: grid;
+        grid-template-columns: minmax(260px, 320px) 1fr;
+        min-height: 0;
+        height: 100%;
+      }
+      .quote {
+        border-right: 1px solid var(--line);
+        background: var(--panel);
+        padding: 16px;
+        overflow: auto;
+        min-height: 0;
+      }
+      .quote h2 {
+        font-size: 12px;
+        letter-spacing: 0.16em;
+        margin-bottom: 10px;
+        color: var(--teal);
+        font-weight: 700;
+      }
+      .quote pre {
+        white-space: pre-wrap;
+        word-break: break-word;
+        font: inherit;
+        font-size: 13px;
+        line-height: 1.55;
+        background: var(--paper);
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 12px;
+      }
+      .hint { font-size: 12px; color: var(--muted); margin-top: 12px; line-height: 1.5; }
+      .viewer {
+        overflow: auto;
+        min-height: 0;
+        background: #ebe4d6;
+        padding: 16px;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+      }
+      .viewer img {
+        max-width: 100%;
+        height: auto;
+        background: #fff;
+        border: 1px solid #cfc5b4;
+        border-radius: 4px;
+      }
+      .viewer .status {
+        color: var(--muted);
+        font-size: 14px;
+        margin-top: 40px;
+      }
+      @media (max-width: 900px) {
+        .layout {
+          grid-template-columns: 1fr;
+          grid-template-rows: minmax(140px, 28vh) 1fr;
+        }
+        .quote { border-right: none; border-bottom: 1px solid var(--line); }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="bar">
+      <div>
+        <div class="kicker">原文核验 · 糖三藏</div>
+        <h1 id="title">原文</h1>
+        <div class="meta" id="meta">定位中…</div>
+      </div>
+      <div class="actions">
+        <a class="btn" id="openPdf" target="_blank" rel="noopener">打开完整 PDF</a>
+        <button class="btn primary" type="button" onclick="window.close()">关闭</button>
+      </div>
+    </div>
+    <div class="layout">
+      <aside class="quote">
+        <h2>命中摘录</h2>
+        <pre id="quoteText">加载中…</pre>
+        <p class="hint">
+          右侧为原文对应页预览；黄色高亮为命中位置。需要前后文时请点「打开完整 PDF」。
+        </p>
+      </aside>
+      <div class="viewer">
+        <p class="status" id="imgStatus">正在渲染原文页…</p>
+        <img id="pageImg" alt="原文页预览" hidden />
+      </div>
+    </div>
+    <script>
+      (async function () {
+        const params = new URLSearchParams(location.search);
+        const token = params.get("token") || "";
+        const page = params.get("page") || "1";
+        const title = params.get("title") || "原文";
+        const matched = params.get("matched") === "1";
+        const qid = params.get("qid") || "";
+        document.getElementById("title").textContent = title;
+        document.getElementById("meta").textContent = matched
+          ? `已定位到约第 ${page} 页（见右侧高亮）`
+          : `未能精确页定位，已打开第 ${page} 页预览`;
+
+        let quote = "";
+        if (qid) {
+          try {
+            const res = await fetch(`/api/source/quote?qid=${encodeURIComponent(qid)}`);
+            if (res.ok) {
+              const data = await res.json();
+              quote = data.quote || "";
+            }
+          } catch (_) {}
+        }
+        document.getElementById("quoteText").textContent = quote || "（无段落摘录）";
+
+        const pdfUrl = `/api/source/pdf?token=${encodeURIComponent(token)}#page=${encodeURIComponent(page)}`;
+        document.getElementById("openPdf").href = pdfUrl;
+
+        const img = document.getElementById("pageImg");
+        const status = document.getElementById("imgStatus");
+        const imgUrl =
+          `/api/source/page.png?token=${encodeURIComponent(token)}` +
+          `&page=${encodeURIComponent(page)}&qid=${encodeURIComponent(qid)}`;
+        img.onload = () => {
+          status.hidden = true;
+          img.hidden = false;
+        };
+        img.onerror = () => {
+          status.textContent = "页预览失败，请改用「打开完整 PDF」。";
+        };
+        img.src = imgUrl;
+      })();
+    </script>
+  </body>
+</html>

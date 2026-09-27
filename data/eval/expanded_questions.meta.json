@@ -1,0 +1,30 @@
+{
+  "version": 4,
+  "purpose": "BSCV-RAG expanded eval (parallel fusion experiments)",
+  "count": 785,
+  "main_table_n": 745,
+  "split": "expanded_v4",
+  "notes": "自 expanded_questions.json 扩充；CMB/本地 harvest + 可选 synthetic；目标主表≥500。",
+  "updated_at": "2026-09-16T19:20:56+08:00",
+  "type_counts": {
+    "decision": 218,
+    "safety": 55,
+    "fact": 427,
+    "compare": 64,
+    "interaction": 21
+  },
+  "source_counts": {
+    "CMB-Exam": 531,
+    "CMExam": 98,
+    "MedQA-ZH": 76,
+    "synthetic_kb": 80
+  },
+  "scope_counts": {
+    "in_scope": 755,
+    "ood": 30
+  },
+  "select_counts": {
+    "multi": 12,
+    "single": 773
+  }
+}
